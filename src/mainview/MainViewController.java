@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 public class MainViewController {
 
     // Klassenvariablen (in der gesamten Klasse bekannt)(um die Klassenvariablen zu benutzen muss "this." davor stehen)
+    //Hallo
     private MainView view;
     private DataAccessObject dao;
     private List<DataTransferObject> dtos;
