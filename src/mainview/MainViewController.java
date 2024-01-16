@@ -11,7 +11,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -43,6 +45,21 @@ public class MainViewController {
         }
     }
 
+    private class DeleteActiveTabEventHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JTabbedPane localtabpane;
+            localtabpane = view.getTabbedPane();
+            int selected = localtabpane.getSelectedIndex();
+            if (selected == 0)
+                return;
+            localtabpane.remove(selected);
+            }
+        }
+    
+    
+    
+    
     private class AddListViewTabEventHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -53,15 +70,17 @@ public class MainViewController {
                     return;
                 }
             }
-            
-
+           
             //(lokale variable; nur in actionPerformed bekannt)
             JPanel listViewTab = new JPanel();
             listViewTab.setBackground(Color.yellow);
-
-            //listViewTab.setLayout(new FlowLayout());
+            
+            // ScrollPane erzeugen und listViewTAab hinzufügen
+            JScrollPane scrollPane = new JScrollPane(listViewTab);
+            
+            //layout für listViewTab festlegen und scrollPane zum TabbedPane hinzufügen
             listViewTab.setLayout(new BoxLayout(listViewTab, BoxLayout.Y_AXIS));
-            view.getTabbedPane().addTab("ListView", listViewTab);
+            view.getTabbedPane().addTab("ListView", scrollPane);
 
             // Tabellen-Überschriften
             String[] columnNames = {"Id",
@@ -92,7 +111,7 @@ public class MainViewController {
             
             // (mit Stream) WICHTIG!!! gibt EXTRAPUNKTE
             dtos.stream()
-            .filter(o -> o.getId() < 20)
+            .filter(o -> o.getId() > 0)
             .forEach(buf -> model.addRow(new Object [] {buf.getId(), buf.getUserId(), buf.getTitle(), buf.getBody()}));
 
             /*
@@ -135,6 +154,12 @@ public class MainViewController {
             }
         }
 
+        if (view.getMenuBar().getComponent(1) instanceof JMenu menu) {
+            if (menu.getItem(0) instanceof JMenuItem item) {
+                item.addActionListener(new DeleteActiveTabEventHandler());
+            }
+        }
+        
         if (view.getMenuBar().getComponent(2) instanceof JMenu menu) {
             if (menu.getItem(0) instanceof JMenuItem item) {
                 item.addActionListener((event) -> JOptionPane.showMessageDialog(null,
