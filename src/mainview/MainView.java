@@ -53,7 +53,7 @@ public class MainView {
     private void initStartTab() {
         startTab.add(new JButton(new ImageIcon("images/add_180x180.png")));
         startTab.add(new JButton(new ImageIcon("images/table_180x180.png")));
-        startTab.add(new JButton("1,0"));
+        startTab.add(new JButton(new ImageIcon("images/minus_180x180.png")));
         startTab.add(new JButton("1,1"));
     }
 

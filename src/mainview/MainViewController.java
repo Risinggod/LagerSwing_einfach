@@ -15,6 +15,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
@@ -32,8 +33,9 @@ import java.awt.event.ActionListener;
 
 public class MainViewController {
 
-    // Klassenvariablen (in der gesamten Klasse bekannt)(um die Klassenvariablen zu benutzen muss "this." davor stehen)
-    //Hallo
+    // Klassenvariablen (in der gesamten Klasse bekannt)(um die Klassenvariablen zu
+    // benutzen muss "this." davor stehen)
+    // Hallo
     private MainView view;
     private DataAccessObject dao;
     private List<DataTransferObject> dtos;
@@ -54,85 +56,89 @@ public class MainViewController {
             if (selected == 0)
                 return;
             localtabpane.remove(selected);
-            }
         }
-    
-    
-    
-    
+    }
+
     private class AddListViewTabEventHandler implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Prüfung, ob bereits ein Tab "ListView" gibt. Wenn ja, wird in den Tab gesprungen und 'actionPerformde' verlassen
+            // Prüfung, ob bereits ein Tab "ListView" gibt. Wenn ja, wird in den Tab
+            // gesprungen und 'actionPerformde' verlassen
             for (int i = 0; i < view.getTabbedPane().getComponentCount(); i++) {
                 if (view.getTabbedPane().getTitleAt(i).equals("ListView")) {
                     view.getTabbedPane().setSelectedIndex(i);
                     return;
                 }
             }
-           
-            //(lokale variable; nur in actionPerformed bekannt)
+
+            // (lokale variable; nur in actionPerformed bekannt)
             JPanel listViewTab = new JPanel();
             listViewTab.setBackground(Color.yellow);
-            
+
             // ScrollPane erzeugen und listViewTAab hinzufügen
             JScrollPane scrollPane = new JScrollPane(listViewTab);
-            
-            //layout für listViewTab festlegen und scrollPane zum TabbedPane hinzufügen
+
+            // layout für listViewTab festlegen und scrollPane zum TabbedPane hinzufügen
             listViewTab.setLayout(new BoxLayout(listViewTab, BoxLayout.Y_AXIS));
             view.getTabbedPane().addTab("ListView", scrollPane);
-
+            view.getTabbedPane().setSelectedIndex(view.getTabbedPane().getTabCount() - 1);
             // Tabellen-Überschriften
-            String[] columnNames = {"Id",
-                            "UserId",
-                            "Title",
-                            "Body"};
+            String[] columnNames = { "Id",
+                    "UserId",
+                    "Title",
+                    "Body" };
 
             // Datenmodell für die Tabelle festlegen
-            DefaultTableModel model = new DefaultTableModel(columnNames, 0); 
+            DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
             // eine Zeile zur Tabelle hinzufügen
-            //model.addRow(new Object[] {1, 2, "title1", "body1"});
+            // model.addRow(new Object[] {1, 2, "title1", "body1"});
 
             // Alle Elemente der List dtos zur Tabelle hinzufügen
 
-            /* (mit for - Schleife)
-            for (int i = 0; i < dtos.size(); i++) {
-                DataTransferObject buf = dtos.get(i);
-                model.addRow(new Object[] {buf.getId(), buf.getUserId(), buf.getTitle(), buf.getBody()});
-            }
-            */
-
-            /* (mit for each)
-            for (var buf : dtos) {
-                model.addRow(new Object [] {buf.getId(), buf.getUserId(), buf.getTitle(), buf.getBody()});
-            }
-            */
-            
-            // (mit Stream) WICHTIG!!! gibt EXTRAPUNKTE
-            dtos.stream()
-            .filter(o -> o.getId() > 0)
-            .forEach(buf -> model.addRow(new Object [] {buf.getId(), buf.getUserId(), buf.getTitle(), buf.getBody()}));
+            /*
+             * (mit for - Schleife)
+             * for (int i = 0; i < dtos.size(); i++) {
+             * DataTransferObject buf = dtos.get(i);
+             * model.addRow(new Object[] {buf.getId(), buf.getUserId(), buf.getTitle(),
+             * buf.getBody()});
+             * }
+             */
 
             /*
-            Iterator<DataTransferObject> iter = dtos.iterator();
-            while (iter.hasNext()) {
-                var buf = iter.next();
-                model.addRow(new Object [] {buf.getId(), buf.getUserId(), buf.getTitle(), buf.getBody()});
-            }
-            */
+             * (mit for each)
+             * for (var buf : dtos) {
+             * model.addRow(new Object [] {buf.getId(), buf.getUserId(), buf.getTitle(),
+             * buf.getBody()});
+             * }
+             */
+
+            // (mit Stream) WICHTIG!!! gibt EXTRAPUNKTE
+            dtos.stream()
+                    .filter(o -> o.getId() > 0)
+                    .forEach(buf -> model
+                            .addRow(new Object[] { buf.getId(), buf.getUserId(), buf.getTitle(), buf.getBody() }));
+
+            /*
+             * Iterator<DataTransferObject> iter = dtos.iterator();
+             * while (iter.hasNext()) {
+             * var buf = iter.next();
+             * model.addRow(new Object [] {buf.getId(), buf.getUserId(), buf.getTitle(),
+             * buf.getBody()});
+             * }
+             */
 
             // ein JTable-Object erzeugen und dem Datenmodell übergeben
             JTable table = new JTable(model);
             table.setBackground(Color.GREEN);
 
             // Header und Tabelle zum Container hinzufügen
-            listViewTab.add(table.getTableHeader());      
+            listViewTab.add(table.getTableHeader());
             listViewTab.add(table);
 
             // automatisch den Tab wechseln, Wenn Liste erzeugt wird
             view.getTabbedPane().setSelectedIndex(view.getTabbedPane().getTabCount() - 1);
-            
+
         }
     }
 
@@ -159,7 +165,7 @@ public class MainViewController {
                 item.addActionListener(new DeleteActiveTabEventHandler());
             }
         }
-        
+
         if (view.getMenuBar().getComponent(2) instanceof JMenu menu) {
             if (menu.getItem(0) instanceof JMenuItem item) {
                 item.addActionListener((event) -> JOptionPane.showMessageDialog(null,
@@ -178,6 +184,44 @@ public class MainViewController {
         if (view.getStartTab().getComponent(0) instanceof JButton btn) {
             btn.addActionListener(new AddAddTabEventHandler());
         }
+
+        if (view.getStartTab().getComponent(2) instanceof JButton btn) {
+            btn.addActionListener((e) -> {
+                for (int i = 0; i < view.getTabbedPane().getComponentCount(); i++) {
+                    if (view.getTabbedPane().getTitleAt(i).equals("Löschen")) {
+                        view.getTabbedPane().setSelectedIndex(i);
+                        return;
+                    }
+                }
+
+                JPanel panel = new JPanel();
+                JTextField textfield = new JTextField();
+                JButton button = new JButton("löschen");
+                button.addActionListener((event) -> {
+                    try {
+                        int itemToDelete = Integer.parseInt(textfield.getText());
+                        
+                        if(itemToDelete <= dtos.size()){
+                            dtos.remove(itemToDelete - 1);
+                            setAnzahlDaten();
+                        } else{
+                            JOptionPane.showMessageDialog(null, "zahl zu groß");
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "bitte nur zahlen eingeben");
+                    }
+                });
+
+                panel.add(new JLabel("Welche position der Liste soll gelöscht werden?"));
+                panel.add(textfield);
+                panel.add(button);
+
+                view.getTabbedPane().addTab("Löschen", panel);
+                view.getTabbedPane().setSelectedIndex(view.getTabbedPane().getTabCount() - 1);
+            });
+        }
+
     }
 
     public void setAnzahlDaten() {
@@ -186,7 +230,9 @@ public class MainViewController {
         }
 
         Thread t1 = new Thread(() -> {
+            if(dtos == null){
             dtos = dao.getAll();
+            }
             SwingUtilities.invokeLater(() -> {
                 if (view.getBottomPanel().getComponent(1) instanceof JLabel label) {
                     label.setText(String.valueOf(dtos.size()));
